@@ -1,10 +1,27 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 
-const contactsInitialState = [];
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: contactsInitialState,
+  initialState: {
+    items: [],
+    isLoading: false,
+    error: null,
+  },
   reducers: {
+    fetchingInProgress(state) {
+      state.isLoading = true;
+    },
+
+    fetchingSuccess(state, action) {
+      state.isLoading = false;
+      state.error = null;
+      state.items = action.payload;
+    },
+    // Виконається якщо HTTP-запит завершився з помилкою
+    fetchingError(state, action) {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
     addContact: {
       reducer(state, action) {
         state.push(action.payload);
@@ -26,5 +43,11 @@ const contactsSlice = createSlice({
   },
 });
 
-export const { addContact, deleteContact } = contactsSlice.actions;
+export const {
+  addContact,
+  deleteContact,
+  fetchingInProgress,
+  fetchingSuccess,
+  fetchingError,
+} = contactsSlice.actions;
 export const contactsReducer = contactsSlice.reducer;
